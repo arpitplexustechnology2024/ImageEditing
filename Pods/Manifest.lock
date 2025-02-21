@@ -1,0 +1,20 @@
+PODS:
+  - Mantis (2.23.2)
+  - TOCropViewController (2.7.4)
+
+DEPENDENCIES:
+  - Mantis
+  - TOCropViewController
+
+SPEC REPOS:
+  trunk:
+    - Mantis
+    - TOCropViewController
+
+SPEC CHECKSUMS:
+  Mantis: 8a6fa3823be4551b3ab6f4a07964f55e2eecf2c2
+  TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
+
+PODFILE CHECKSUM: c4528efd9d49b47128e51f73d1b34992c31db8e1
+
+COCOAPODS: 1.15.2

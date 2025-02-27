@@ -11,67 +11,6 @@ import Photos
 import Mantis
 import PencilKit
 
-// MARK: - Filter Collection View Cell
-class FilterCollectionViewCell: UICollectionViewCell {
-    static let identifier = "FilterCollectionViewCell"
-    
-    let filterImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 10
-        return imageView
-    }()
-    
-    let filterNameLabel: UILabel = {
-        let label = UILabel()
-        label.textAlignment = .center
-        label.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        label.font = .systemFont(ofSize: 12)
-        label.layer.cornerRadius = 10
-        label.textColor = .white
-        return label
-    }()
-    
-    override var isSelected: Bool {
-        didSet {
-            self.layer.borderWidth = isSelected ? 2 : 0
-            self.layer.borderColor = isSelected ? UIColor.white.cgColor : nil
-        }
-    }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupUI()
-        self.contentView.layer.cornerRadius = 10
-        self.layer.cornerRadius = 10
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func setupUI() {
-        contentView.addSubview(filterImageView)
-        contentView.addSubview(filterNameLabel)
-        
-        filterImageView.translatesAutoresizingMaskIntoConstraints = false
-        filterNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            filterImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            filterImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            filterImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            filterImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            
-            filterNameLabel.heightAnchor.constraint(equalToConstant: 20),
-            filterNameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            filterNameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            filterNameLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-        ])
-    }
-}
-
 // MARK: - Main View Controller
 class ImageEditingVC: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
@@ -80,8 +19,12 @@ class ImageEditingVC: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet weak var cropButton: UIButton!
     @IBOutlet weak var filterButton: UIButton!
     @IBOutlet weak var brushButton: UIButton!
+    @IBOutlet weak var textButton: UIButton!
     @IBOutlet weak var saveButton: UIButton!
     @IBOutlet weak var buttonStackView: UIStackView!
+    @IBOutlet weak var ShapeButton: UIButton!
+    @IBOutlet weak var stickerButton: UIButton!
+    @IBOutlet weak var stackView: UIStackView!
     
     private var image: UIImage?
     private var canvasView: PKCanvasView!
@@ -89,7 +32,6 @@ class ImageEditingVC: UIViewController, UIImagePickerControllerDelegate, UINavig
     private var drawingStack: [PKDrawing] = []
     private var redoStack: [PKDrawing] = []
     private var isDrawingMode = false
-    
     var originalImage: UIImage?
     private var selectedFilterIndex: Int = 0
     private var doneButton: UIBarButtonItem!
@@ -108,6 +50,8 @@ class ImageEditingVC: UIViewController, UIImagePickerControllerDelegate, UINavig
         collectionView.showsHorizontalScrollIndicator = false
         return collectionView
     }()
+    
+    private var textViews: [DraggableTextView] = []
     
     private let filters = ["Original", "Vivid", "Dramatic", "Mono", "Nashville", "Toaster", "1977", "Noir", "Comic", "Crystallize", "Bloom", "Pixellate", "Blur", "Sepia", "Fade", "Sharpen", "HDR", "Vignette", "Tonal", "Dot Matrix", "Edge Work", "X-Ray", "Posterize"]
     
@@ -138,16 +82,27 @@ class ImageEditingVC: UIViewController, UIImagePickerControllerDelegate, UINavig
         cropButton.layer.cornerRadius = 10
         filterButton.layer.cornerRadius = 10
         brushButton.layer.cornerRadius = 10
+        textButton.layer.cornerRadius = 10
+        ShapeButton.layer.cornerRadius = 10
+        stickerButton.layer.cornerRadius = 10
         saveButton.layer.cornerRadius = 10
         
         cropButton.isEnabled = false
         filterButton.isEnabled = false
         brushButton.isEnabled = false
+        textButton.isEnabled = false
+        ShapeButton.isEnabled = false
+        stickerButton.isEnabled = false
         saveButton.isEnabled = false
+        
+        stackView.isHidden = true
         
         cropButton.alpha = 0.5
         filterButton.alpha = 0.5
         brushButton.alpha = 0.5
+        stickerButton.alpha = 0.5
+        textButton.alpha = 0.5
+        ShapeButton.alpha = 0.5
         saveButton.alpha = 0.5
     }
     
@@ -192,6 +147,7 @@ class ImageEditingVC: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     private func enableDrawing() {
         updateCanvasFrame()
+        stackView.isHidden = false
         canvasView.isHidden = false
         navigationItem.rightBarButtonItem = doneButton
         
@@ -212,6 +168,7 @@ class ImageEditingVC: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     private func disableDrawing() {
         canvasView.isHidden = true
+        stackView.isHidden = true
         navigationItem.rightBarButtonItem = nil
         
         if let toolPicker = toolPicker {
@@ -219,19 +176,27 @@ class ImageEditingVC: UIViewController, UIImagePickerControllerDelegate, UINavig
             toolPicker.removeObserver(canvasView)
         }
         
-        mergeDrawingWithImage()
+        if !canvasView.drawing.bounds.isEmpty {
+            mergeDrawingWithImage()
+        }
     }
     
     private func mergeDrawingWithImage() {
         guard let image = imageview.image else { return }
         
+        if canvasView.bounds.width <= 0 || canvasView.bounds.height <= 0 {
+            updateCanvasFrame()
+        }
+        
         UIGraphicsBeginImageContextWithOptions(image.size, false, 0.0)
         
         image.draw(in: CGRect(origin: .zero, size: image.size))
         
-        let scale = image.size.width / canvasView.bounds.width
-        let drawingImage = canvasView.drawing.image(from: canvasView.bounds, scale: scale)
-        drawingImage.draw(in: CGRect(origin: .zero, size: image.size))
+        if canvasView.bounds.width > 0 && canvasView.bounds.height > 0 {
+            let scale = image.size.width / canvasView.bounds.width
+            let drawingImage = canvasView.drawing.image(from: canvasView.bounds, scale: scale)
+            drawingImage.draw(in: CGRect(origin: .zero, size: image.size))
+        }
         
         if let mergedImage = UIGraphicsGetImageFromCurrentImageContext() {
             imageview.image = mergedImage
@@ -244,14 +209,11 @@ class ImageEditingVC: UIViewController, UIImagePickerControllerDelegate, UINavig
         redoStack.removeAll()
     }
     
-    
-    @objc private func drawingDoneButtonTapped() {
-        disableDrawing()
-    }
-    
     @objc private func doneButtonTapped() {
-        isDrawingMode = false
-        disableDrawing()
+        if isDrawingMode {
+            isDrawingMode = false
+            disableDrawing()
+        }
         
         if isFilterViewVisible {
             hideFilterView()
@@ -292,12 +254,28 @@ class ImageEditingVC: UIViewController, UIImagePickerControllerDelegate, UINavig
         cropButton.isEnabled = hasImage
         filterButton.isEnabled = hasImage
         brushButton.isEnabled = hasImage
+        textButton.isEnabled = hasImage
+        stickerButton.isEnabled = hasImage
+        ShapeButton.isEnabled = hasImage
         saveButton.isEnabled = hasImage
         
         cropButton.alpha = hasImage ? 1.0 : 0.5
         filterButton.alpha = hasImage ? 1.0 : 0.5
         brushButton.alpha = hasImage ? 1.0 : 0.5
+        textButton.alpha = hasImage ? 1.0 : 0.5
+        ShapeButton.alpha = hasImage ? 1.0 : 0.5
+        stickerButton.alpha = hasImage ? 1.0 : 0.5
         saveButton.alpha = hasImage ? 1.0 : 0.5
+    }
+    
+    @IBAction func stickerButtonTapped(_ sender: UIButton) {
+        let stickerBottomView = StickerBottomView()
+        
+        stickerBottomView.onStickerSelected = { [weak self] image in
+            self?.addStickerToImage(image)
+        }
+        
+        present(stickerBottomView, animated: true)
     }
     
     @IBAction func cropButtonTapped(_ sender: UIButton) {
@@ -308,6 +286,11 @@ class ImageEditingVC: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     @IBAction func filterButtonTapped(_ sender: UIButton) {
         guard imageview.image != nil else { return }
+        
+        if isDrawingMode {
+            isDrawingMode = false
+            disableDrawing()
+        }
         
         isFilterViewVisible.toggle()
         
@@ -332,16 +315,152 @@ class ImageEditingVC: UIViewController, UIImagePickerControllerDelegate, UINavig
         showImageSourceOptions()
     }
     
+    @IBAction func textButtonTapped(_ sender: UIButton) {
+        let textEditorView = TextEditorView(frame: .zero)
+        let containerView = UIView()
+        
+        containerView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        containerView.frame = view.bounds
+        
+        view.addSubview(containerView)
+        containerView.addSubview(textEditorView)
+        
+        textEditorView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            textEditorView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            textEditorView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            textEditorView.widthAnchor.constraint(equalTo: containerView.widthAnchor, multiplier: 0.85),
+        ])
+        
+        textEditorView.onDismiss = {
+            UIView.animate(withDuration: 0.3, animations: {
+                containerView.alpha = 0
+            }) { _ in
+                containerView.removeFromSuperview()
+            }
+        }
+        
+        textEditorView.onAddText = { [weak self] text, color, font in
+            self?.addTextToImage(text, color: color, font: font)
+        }
+        
+        containerView.alpha = 0
+        textEditorView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+        
+        UIView.animate(withDuration: 0.3) {
+            containerView.alpha = 1
+            textEditorView.transform = .identity
+        }
+    }
+    
+    private func addTextToImage(_ text: String, color: UIColor, font: UIFont) {
+        let textView = DraggableTextView(text: text, textColor: color, font: font)
+        textView.center = CGPoint(x: imageview.bounds.midX, y: imageview.bounds.midY)
+        
+        textView.onDelete = { [weak self, weak textView] in
+            guard let textView = textView else { return }
+            self?.removeTextView(textView)
+        }
+        
+        imageview.addSubview(textView)
+        textViews.append(textView)
+    }
+    
+    private func removeTextView(_ textView: DraggableTextView) {
+        textView.removeFromSuperview()
+        if let index = textViews.firstIndex(of: textView) {
+            textViews.remove(at: index)
+        }
+    }
+    
+    private func renderTextOnImage() -> UIImage? {
+        let originalBorderStates = textViews.map { ($0, $0.layer.borderWidth, $0.layer.borderColor) }
+        
+        for textView in textViews {
+            textView.layer.borderWidth = 0
+            textView.layer.borderColor = UIColor.clear.cgColor
+        }
+        
+        guard let image = imageview.image else { return nil }
+        
+        let imageViewSize = imageview.bounds.size
+        let imageSize = image.size
+        
+        let widthRatio = imageViewSize.width / imageSize.width
+        let heightRatio = imageViewSize.height / imageSize.height
+        let scale = min(widthRatio, heightRatio)
+        
+        let scaledWidth = imageSize.width * scale
+        let scaledHeight = imageSize.height * scale
+        
+        let imageFrame = CGRect(
+            x: (imageViewSize.width - scaledWidth) / 2,
+            y: (imageViewSize.height - scaledHeight) / 2,
+            width: scaledWidth,
+            height: scaledHeight
+        )
+        
+        UIGraphicsBeginImageContextWithOptions(image.size, false, 0.0)
+        
+        image.draw(in: CGRect(origin: .zero, size: image.size))
+        
+        guard let context = UIGraphicsGetCurrentContext() else {
+            
+            for (textView, borderWidth, borderColor) in originalBorderStates {
+                textView.layer.borderWidth = borderWidth
+                textView.layer.borderColor = borderColor
+            }
+            UIGraphicsEndImageContext()
+            return nil
+        }
+        
+        context.scaleBy(x: imageSize.width / imageFrame.width, y: imageSize.height / imageFrame.height)
+        
+        for textView in textViews {
+            let textViewFrame = textView.frame
+            
+            let relativeFrame = CGRect(
+                x: (textViewFrame.origin.x - imageFrame.origin.x),
+                y: (textViewFrame.origin.y - imageFrame.origin.y),
+                width: textViewFrame.width,
+                height: textViewFrame.height
+            )
+            
+            context.saveGState()
+            context.translateBy(x: relativeFrame.origin.x, y: relativeFrame.origin.y)
+            textView.layer.render(in: context)
+            context.restoreGState()
+        }
+        
+        let renderedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        for (textView, borderWidth, borderColor) in originalBorderStates {
+            textView.layer.borderWidth = borderWidth
+            textView.layer.borderColor = borderColor
+        }
+        
+        return renderedImage
+    }
+    
     @IBAction func saveButtonTapped(_ sender: UIButton) {
-        guard let imageToSave = imageview.image else {
+        guard var finalImage = renderTextOnImage() else {
             let alert = UIAlertController(title: "Error", message: "No image to save", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default))
             present(alert, animated: true)
             return
         }
         
+        if let imageWithShapes = renderShapesOnImage(finalImage) {
+            finalImage = imageWithShapes
+        }
+        
+        if let imageWithStickers = renderStickersOnImage(finalImage) {
+            finalImage = imageWithStickers
+        }
+        
         PHPhotoLibrary.shared().performChanges({
-            PHAssetChangeRequest.creationRequestForAsset(from: imageToSave)
+            PHAssetChangeRequest.creationRequestForAsset(from: finalImage)
         }) { success, error in
             DispatchQueue.main.async {
                 if success {
@@ -354,6 +473,51 @@ class ImageEditingVC: UIViewController, UIImagePickerControllerDelegate, UINavig
                     self.present(alert, animated: true)
                 }
             }
+        }
+    }
+    
+    @IBAction func ShapeButtonTapped(_ sender: UIButton) {
+        let shapePickerView = ShapePickerView(frame: .zero)
+        let containerView = UIView()
+        
+        containerView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        containerView.frame = view.bounds
+        
+        view.addSubview(containerView)
+        containerView.addSubview(shapePickerView)
+        
+        shapePickerView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            shapePickerView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            shapePickerView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            shapePickerView.widthAnchor.constraint(equalTo: containerView.widthAnchor),
+            shapePickerView.heightAnchor.constraint(equalToConstant: 200)
+        ])
+        
+        shapePickerView.onCancel = {
+            UIView.animate(withDuration: 0.3, animations: {
+                containerView.alpha = 0
+            }) { _ in
+                containerView.removeFromSuperview()
+            }
+        }
+        
+        shapePickerView.onAddShape = { [weak self] shapeType, color in
+            self?.addShapeToImage(type: shapeType, color: color)
+            
+            UIView.animate(withDuration: 0.3, animations: {
+                containerView.alpha = 0
+            }) { _ in
+                containerView.removeFromSuperview()
+            }
+        }
+        
+        containerView.alpha = 0
+        shapePickerView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+        
+        UIView.animate(withDuration: 0.3) {
+            containerView.alpha = 1
+            shapePickerView.transform = .identity
         }
     }
     
@@ -646,5 +810,246 @@ extension ImageEditingVC: PKCanvasViewDelegate {
     func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
         drawingStack.append(canvasView.drawing)
         redoStack.removeAll()
+    }
+}
+
+// MARK: - Shape
+extension ImageEditingVC {
+    private var shapeViews: [DraggableShapeView] {
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKeys.shapeViewsKey) as? [DraggableShapeView] ?? []
+        }
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.shapeViewsKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    
+    func addShapeToImage(type: DraggableShapeView.ShapeType, color: UIColor) {
+        let defaultSize: CGFloat = 100
+        var frame: CGRect
+        
+        switch type {
+        case .square, .circle:
+            frame = CGRect(x: 0, y: 0, width: defaultSize, height: defaultSize)
+        case .rectangle, .oval:
+            frame = CGRect(x: 0, y: 0, width: defaultSize * 1.5, height: defaultSize)
+        case .triangle:
+            frame = CGRect(x: 0, y: 0, width: defaultSize, height: defaultSize)
+        case .pentagon, .hexagon, .star:
+            frame = CGRect(x: 0, y: 0, width: defaultSize, height: defaultSize)
+        }
+        
+        let shapeView = DraggableShapeView(frame: frame, type: type, color: color)
+        shapeView.center = CGPoint(x: imageview.bounds.midX, y: imageview.bounds.midY)
+        
+        shapeView.onDelete = { [weak self, weak shapeView] in
+            guard let shapeView = shapeView else { return }
+            self?.removeShapeView(shapeView)
+        }
+        
+        imageview.addSubview(shapeView)
+        
+        var currentShapeViews = self.shapeViews
+        currentShapeViews.append(shapeView)
+        self.shapeViews = currentShapeViews
+    }
+    
+    func removeShapeView(_ shapeView: DraggableShapeView) {
+        shapeView.removeFromSuperview()
+        
+        var currentShapeViews = self.shapeViews
+        if let index = currentShapeViews.firstIndex(of: shapeView) {
+            currentShapeViews.remove(at: index)
+            self.shapeViews = currentShapeViews
+        }
+    }
+    
+    func renderShapesOnImage(_ image: UIImage) -> UIImage? {
+        let currentShapeViews = self.shapeViews
+        
+        if currentShapeViews.isEmpty {
+            return image
+        }
+        
+        let originalShapeBorderStates = currentShapeViews.map { ($0, $0.layer.borderWidth, $0.layer.borderColor) }
+        
+        for shapeView in currentShapeViews {
+            shapeView.layer.borderWidth = 0
+            shapeView.layer.borderColor = UIColor.clear.cgColor
+        }
+        
+        let imageViewSize = imageview.bounds.size
+        let imageSize = image.size
+        
+        let widthRatio = imageViewSize.width / imageSize.width
+        let heightRatio = imageViewSize.height / imageSize.height
+        let scale = min(widthRatio, heightRatio)
+        
+        let scaledWidth = imageSize.width * scale
+        let scaledHeight = imageSize.height * scale
+        
+        let imageFrame = CGRect(
+            x: (imageViewSize.width - scaledWidth) / 2,
+            y: (imageViewSize.height - scaledHeight) / 2,
+            width: scaledWidth,
+            height: scaledHeight
+        )
+        
+        UIGraphicsBeginImageContextWithOptions(image.size, false, 0.0)
+        
+        image.draw(in: CGRect(origin: .zero, size: image.size))
+        
+        guard let context = UIGraphicsGetCurrentContext() else {
+            for (shapeView, borderWidth, borderColor) in originalShapeBorderStates {
+                shapeView.layer.borderWidth = borderWidth
+                shapeView.layer.borderColor = borderColor
+            }
+            UIGraphicsEndImageContext()
+            return nil
+        }
+        
+        context.scaleBy(x: imageSize.width / imageFrame.width, y: imageSize.height / imageFrame.height)
+        
+        for shapeView in currentShapeViews {
+            let shapeViewFrame = shapeView.frame
+            
+            let relativeFrame = CGRect(
+                x: (shapeViewFrame.origin.x - imageFrame.origin.x),
+                y: (shapeViewFrame.origin.y - imageFrame.origin.y),
+                width: shapeViewFrame.width,
+                height: shapeViewFrame.height
+            )
+            
+            context.saveGState()
+            context.translateBy(x: relativeFrame.origin.x, y: relativeFrame.origin.y)
+            shapeView.layer.render(in: context)
+            context.restoreGState()
+        }
+        
+        let renderedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        for (shapeView, borderWidth, borderColor) in originalShapeBorderStates {
+            shapeView.layer.borderWidth = borderWidth
+            shapeView.layer.borderColor = borderColor
+        }
+        
+        return renderedImage ?? image
+    }
+}
+
+
+//MARK: - Sticker
+extension ImageEditingVC {
+    private var stickerViews: [DraggableStickerView] {
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKeys.stickerViewsKey) as? [DraggableStickerView] ?? []
+        }
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.stickerViewsKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    
+    private func addStickerToImage(_ image: UIImage) {
+        let stickerView = DraggableStickerView(image: image)
+        stickerView.center = CGPoint(x: imageview.bounds.midX, y: imageview.bounds.midY)
+        
+        stickerView.onDelete = { [weak self, weak stickerView] in
+            guard let stickerView = stickerView else { return }
+            self?.removeStickerView(stickerView)
+        }
+        
+        imageview.addSubview(stickerView)
+        
+        var currentStickerViews = self.stickerViews
+        currentStickerViews.append(stickerView)
+        self.stickerViews = currentStickerViews
+    }
+    
+    private func removeStickerView(_ stickerView: DraggableStickerView) {
+        stickerView.removeFromSuperview()
+        
+        var currentStickerViews = self.stickerViews
+        if let index = currentStickerViews.firstIndex(where: { $0 === stickerView }) {
+            currentStickerViews.remove(at: index)
+            self.stickerViews = currentStickerViews
+        }
+    }
+    
+    private func renderStickersOnImage(_ image: UIImage) -> UIImage? {
+        let currentStickerViews = self.stickerViews
+        
+        if currentStickerViews.isEmpty {
+            return image
+        }
+        
+        let originalStickerBorderStates = currentStickerViews.map { ($0, $0.layer.borderWidth, $0.layer.borderColor) }
+        
+        for stickerView in currentStickerViews {
+            stickerView.layer.borderWidth = 0
+            stickerView.layer.borderColor = UIColor.clear.cgColor
+        }
+        
+        let imageViewSize = imageview.bounds.size
+        let imageSize = image.size
+        
+        let widthRatio = imageViewSize.width / imageSize.width
+        let heightRatio = imageViewSize.height / imageSize.height
+        let scale = min(widthRatio, heightRatio)
+        
+        let scaledWidth = imageSize.width * scale
+        let scaledHeight = imageSize.height * scale
+        
+        let imageFrame = CGRect(
+            x: (imageViewSize.width - scaledWidth) / 2,
+            y: (imageViewSize.height - scaledHeight) / 2,
+            width: scaledWidth,
+            height: scaledHeight
+        )
+        
+        UIGraphicsBeginImageContextWithOptions(image.size, false, 0.0)
+        
+        image.draw(in: CGRect(origin: .zero, size: image.size))
+        
+        guard let context = UIGraphicsGetCurrentContext() else {
+            for (stickerView, borderWidth, borderColor) in originalStickerBorderStates {
+                stickerView.layer.borderWidth = borderWidth
+                stickerView.layer.borderColor = borderColor
+            }
+            UIGraphicsEndImageContext()
+            return nil
+        }
+        
+        context.scaleBy(x: imageSize.width / imageFrame.width, y: imageSize.height / imageFrame.height)
+        
+        for stickerView in currentStickerViews {
+            let stickerViewFrame = stickerView.frame
+            
+            let relativeFrame = CGRect(
+                x: (stickerViewFrame.origin.x - imageFrame.origin.x),
+                y: (stickerViewFrame.origin.y - imageFrame.origin.y),
+                width: stickerViewFrame.width,
+                height: stickerViewFrame.height
+            )
+            
+            context.saveGState()
+            context.translateBy(x: relativeFrame.origin.x, y: relativeFrame.origin.y)
+
+            let transform = stickerView.transform
+            context.concatenate(transform)
+            
+            stickerView.layer.render(in: context)
+            context.restoreGState()
+        }
+        
+        let renderedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        for (stickerView, borderWidth, borderColor) in originalStickerBorderStates {
+            stickerView.layer.borderWidth = borderWidth
+            stickerView.layer.borderColor = borderColor
+        }
+        
+        return renderedImage ?? image
     }
 }

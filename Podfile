@@ -7,7 +7,6 @@ target 'ImageEditing' do
 
   # Pods for ImageEditing
 pod 'Mantis'
-pod 'TOCropViewController'
 
   target 'ImageEditingTests' do
     inherit! :search_paths

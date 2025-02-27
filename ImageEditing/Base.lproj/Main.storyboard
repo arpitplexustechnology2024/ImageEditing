@@ -22,7 +22,7 @@
                                 <rect key="frame" x="18" y="760" width="359" height="50"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="taE-Lk-Bvm">
-                                        <rect key="frame" x="0.0" y="0.0" width="53.333333333333336" height="50"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="44.333333333333336" height="50"/>
                                         <color key="backgroundColor" red="0.36862745099999999" green="0.36862745099999999" blue="0.36862745099999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -32,7 +32,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X3J-hE-ws7">
-                                        <rect key="frame" x="61.333333333333329" y="0.0" width="53" height="50"/>
+                                        <rect key="frame" x="52.333333333333329" y="0.0" width="44.666666666666671" height="50"/>
                                         <color key="backgroundColor" red="0.36862745099999999" green="0.36862745099999999" blue="0.36862745099999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -42,7 +42,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ric-Gv-33w">
-                                        <rect key="frame" x="122.33333333333333" y="0.0" width="53.333333333333329" height="50"/>
+                                        <rect key="frame" x="105" y="0.0" width="44.333333333333343" height="50"/>
                                         <color key="backgroundColor" red="0.36862745099999999" green="0.36862745099999999" blue="0.36862745099999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -52,21 +52,37 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vNn-cD-2ju">
-                                        <rect key="frame" x="183.66666666666666" y="0.0" width="53" height="50"/>
+                                        <rect key="frame" x="157.33333333333334" y="0.0" width="44.333333333333343" height="50"/>
                                         <color key="backgroundColor" red="0.36862745099999999" green="0.36862745099999999" blue="0.36862745099999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                         <state key="normal" image="t.square.fill" catalog="system"/>
+                                        <connections>
+                                            <action selector="textButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="l9C-59-glH"/>
+                                        </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Ki-F9-xqN">
-                                        <rect key="frame" x="244.66666666666671" y="0.0" width="53.333333333333343" height="50"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5gH-ht-cdD">
+                                        <rect key="frame" x="209.66666666666666" y="0.0" width="44.333333333333343" height="50"/>
                                         <color key="backgroundColor" red="0.36862745099999999" green="0.36862745099999999" blue="0.36862745099999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                        <state key="normal" image="slider.horizontal.3" catalog="system"/>
+                                        <state key="normal" image="squareshape.controlhandles.on.squareshape.controlhandles" catalog="system"/>
+                                        <connections>
+                                            <action selector="ShapeButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="EqZ-tA-wJf"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mSc-Gn-GYN">
+                                        <rect key="frame" x="262" y="0.0" width="44.666666666666686" height="50"/>
+                                        <color key="backgroundColor" red="0.36862745099999999" green="0.36862745099999999" blue="0.36862745099999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" image="figure.highintensity.intervaltraining.circle" catalog="system"/>
+                                        <connections>
+                                            <action selector="stickerButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="6A4-zP-sUF"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DhI-np-psI">
-                                        <rect key="frame" x="306" y="0.0" width="53" height="50"/>
+                                        <rect key="frame" x="314.66666666666669" y="0.0" width="44.333333333333314" height="50"/>
                                         <color key="backgroundColor" red="0.36862745099999999" green="0.36862745099999999" blue="0.36862745099999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -80,12 +96,44 @@
                                     <constraint firstAttribute="height" constant="50" id="sW4-yC-KBM"/>
                                 </constraints>
                             </stackView>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="1Br-wY-1ZX">
+                                <rect key="frame" x="151.66666666666666" y="119" width="90" height="35"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0bw-5R-3hT">
+                                        <rect key="frame" x="0.0" y="0.0" width="35" height="35"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="35" id="zFJ-ZY-Rog"/>
+                                        </constraints>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" image="undo"/>
+                                        <connections>
+                                            <action selector="undo:" destination="dkx-z0-nzr" eventType="touchUpInside" id="xsV-rV-89s"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mmG-WS-YDn">
+                                        <rect key="frame" x="55" y="0.0" width="35" height="35"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="35" id="4uA-vj-bBz"/>
+                                        </constraints>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" image="redo"/>
+                                        <connections>
+                                            <action selector="redo:" destination="dkx-z0-nzr" eventType="touchUpInside" id="UoF-e6-tlt"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="35" id="whB-JS-9BU"/>
+                                </constraints>
+                            </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="NSc-Dm-nnB" firstAttribute="top" secondItem="pPg-fk-GGT" secondAttribute="bottom" constant="16" id="V5C-X2-lwC"/>
+                            <constraint firstItem="1Br-wY-1ZX" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="16" id="WvL-ZB-hi2"/>
                             <constraint firstItem="pPg-fk-GGT" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="bWZ-eI-z99"/>
+                            <constraint firstItem="1Br-wY-1ZX" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="bp4-lv-zmD"/>
                             <constraint firstItem="pPg-fk-GGT" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="f61-tQ-dKJ"/>
                             <constraint firstItem="pPg-fk-GGT" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="q8p-0S-VLo"/>
                             <constraint firstItem="NSc-Dm-nnB" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="18" id="qFD-Ie-dbS"/>
@@ -102,6 +150,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="ShapeButton" destination="5gH-ht-cdD" id="LFe-WY-Gbw"/>
                         <outlet property="addImageButton" destination="Lsc-wr-Fwl" id="hli-VA-94w"/>
                         <outlet property="brushButton" destination="Ric-Gv-33w" id="tiC-I1-KZr"/>
                         <outlet property="buttonStackView" destination="NSc-Dm-nnB" id="p5W-Hp-E9e"/>
@@ -109,11 +158,14 @@
                         <outlet property="filterButton" destination="X3J-hE-ws7" id="RVu-n9-ze3"/>
                         <outlet property="imageview" destination="pPg-fk-GGT" id="BZq-Ux-w0D"/>
                         <outlet property="saveButton" destination="DhI-np-psI" id="NKw-GY-joZ"/>
+                        <outlet property="stackView" destination="1Br-wY-1ZX" id="OqT-UB-wn5"/>
+                        <outlet property="stickerButton" destination="mSc-Gn-GYN" id="iMa-N6-3lr"/>
+                        <outlet property="textButton" destination="vNn-cD-2ju" id="RYV-Ee-fWZ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="959.5419847328244" y="-27.464788732394368"/>
+            <point key="canvasLocation" x="1492" y="-25"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="2od-LC-OpO">
@@ -131,16 +183,19 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Y9b-vd-oDc" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="32.824427480916029" y="-27.464788732394368"/>
+            <point key="canvasLocation" x="566" y="-25"/>
         </scene>
     </scenes>
     <resources>
         <image name="camera.filters" catalog="system" width="128" height="119"/>
         <image name="crop" catalog="system" width="128" height="116"/>
+        <image name="figure.highintensity.intervaltraining.circle" catalog="system" width="128" height="123"/>
         <image name="folder.badge.plus" catalog="system" width="128" height="93"/>
         <image name="paintbrush.pointed.fill" catalog="system" width="128" height="118"/>
-        <image name="slider.horizontal.3" catalog="system" width="128" height="99"/>
+        <image name="redo" width="512" height="512"/>
         <image name="square.and.arrow.up" catalog="system" width="110" height="128"/>
+        <image name="squareshape.controlhandles.on.squareshape.controlhandles" catalog="system" width="128" height="116"/>
         <image name="t.square.fill" catalog="system" width="128" height="114"/>
+        <image name="undo" width="512" height="512"/>
     </resources>
 </document>
